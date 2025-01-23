@@ -100,10 +100,12 @@ namespace Cainos.PixelArtTopDown_Basic
 
             GetComponent<Rigidbody2D>().linearVelocity = speed * dir;
 
+            Debug.DrawRay(transform.position, dir * dashDistance, Color.red, 0.1f);
+
             // Check for dash input when we're able to dash
             if (Input.GetKeyDown(KeyCode.Space) && canDash && !isDashing)
             {
-                StartDash();
+                CheckAndStartDash();
             }
 
             if (isDashing)
@@ -131,14 +133,35 @@ namespace Cainos.PixelArtTopDown_Basic
                 }
             }
         }
-        private void StartDash()
+        private void StartDash(Vector3 dashDirection, float adjustedDashDistance=0)
         {
             isDashing = true;
             canDash = false;
             dashTimer = 0f;
             dashStartPosition = transform.position;
             Debug.Log($"Attempting to dash with direction: {CurrentDirection}");
-            
+
+            if (adjustedDashDistance == 0)
+            {
+                dashTargetPosition = transform.position + (dashDirection * dashDistance);
+            }
+            else
+            {
+                dashTargetPosition = transform.position + (dashDirection * adjustedDashDistance);
+            }
+
+        }    
+        private void FinishDash()
+        {
+            isDashing = false;
+            transform.position = dashTargetPosition;
+            cooldownTimer = 0f;
+        }
+
+        private void CheckAndStartDash()
+        {
+            Debug.Log($"CheckAndStartDash called with CurrentDirection: {CurrentDirection}, raw input: {Input.GetAxis("Vertical")}");
+
             Vector3 dashDirection = Vector3.zero;
             switch(CurrentDirection)
             {
@@ -167,14 +190,25 @@ namespace Cainos.PixelArtTopDown_Basic
                     dashDirection = (Vector3.down + Vector3.right).normalized;
                     break;
             }
-            dashTargetPosition = transform.position + (dashDirection * dashDistance);
-        }    
-        private void FinishDash()
-        {
-            isDashing = false;
-            transform.position = dashTargetPosition;
-            cooldownTimer = 0f;
-        }    
+            Debug.Log($"Casting ray from {transform.position} in direction {dashDirection} with distance {dashDistance}");
+            Debug.DrawRay(transform.position, dashDirection * dashDistance, Color.green, 0.5f);
+            Debug.DrawRay(transform.position, Vector3.up * 0.5f, Color.blue, 0.5f);
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, dashDirection, dashDistance, ~LayerMask.GetMask("Adventurer"));
+            Debug.Log($"Hit something: {hit.collider != null}, Layer mask: {~LayerMask.GetMask("Adventurer")}");
+
+                
+            if (hit.collider == null)
+            {
+                StartDash(dashDirection);
+            }
+            else
+            {
+                float adjustedDashDistance = hit.distance - 0.05f;
+                StartDash(dashDirection, adjustedDashDistance);
+                Debug.Log($"Dash blocked by: {hit.collider.gameObject.name}");
+            }
+                
+        }
         
     }
 }
