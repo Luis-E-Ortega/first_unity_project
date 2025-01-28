@@ -1,7 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
+using Unity.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Rendering;
 
 namespace Cainos.PixelArtTopDown_Basic
 {
@@ -12,11 +15,13 @@ namespace Cainos.PixelArtTopDown_Basic
         private int CurrentDirection => animator.GetInteger("Direction");
 
         private Animator animator;
+        public Rigidbody2D myRigidbody;
+        public TrailRenderer trail;
+        public ParticleSystem dashParticles;
 
         [SerializeField] private float dashDistance = 3f; // How far the dash will move the object
         [SerializeField] private float dashDuration = 0.1f; // How long the dash takes to complete
         [SerializeField] private float dashCooldown = 1f; // Time between dashes
-        public Rigidbody2D myRigidbody;
         private bool canDash = true;
         private bool isDashing = false;
         private float dashTimer = 0f;
@@ -27,6 +32,10 @@ namespace Cainos.PixelArtTopDown_Basic
         private void Start()
         {
             animator = GetComponent<Animator>();
+            trail = GetComponent<TrailRenderer>();
+            trail.enabled = false;
+            dashParticles.Stop(true); // Ensure that particles aren't played on start
+
             gameObject.name = "Adventurer";
         }
 
@@ -133,21 +142,22 @@ namespace Cainos.PixelArtTopDown_Basic
                 }
             }
         }
-        private void StartDash(Vector3 dashDirection, float adjustedDashDistance=0)
+        private void StartDash(Vector3 direction, float adjustedDashDistance=0)
         {
             isDashing = true;
             canDash = false;
             dashTimer = 0f;
             dashStartPosition = transform.position;
-            Debug.Log($"Attempting to dash with direction: {CurrentDirection}");
-
-            if (adjustedDashDistance == 0)
+            // Add visual effect to dash
+            dashParticles.Play();
+            
+            if (adjustedDashDistance == 0) // If distance was not adjusted due to collision, dash full distance
             {
-                dashTargetPosition = transform.position + (dashDirection * dashDistance);
+                dashTargetPosition = transform.position + (direction * dashDistance);
             }
-            else
+            else // Otherwise dash adjusted distance, stopping before object
             {
-                dashTargetPosition = transform.position + (dashDirection * adjustedDashDistance);
+                dashTargetPosition = transform.position + (direction * adjustedDashDistance);
             }
 
         }    
@@ -161,53 +171,70 @@ namespace Cainos.PixelArtTopDown_Basic
         private void CheckAndStartDash()
         {
             Debug.Log($"CheckAndStartDash called with CurrentDirection: {CurrentDirection}, raw input: {Input.GetAxis("Vertical")}");
-
+            // Determine the direction for the dash
             Vector3 dashDirection = Vector3.zero;
+
             switch(CurrentDirection)
             {
                 case 0:
                     dashDirection = Vector3.down;
+                    getShapesRotation(-90, -90, 0);
                     break;
                 case 1:
                     dashDirection = Vector3.up;
+                    getShapesRotation(90, 90, 0);
                     break;
                 case 2:
                     dashDirection = Vector3.right;
+                    getShapesRotation(180, 180, 0);
                     break;
                 case 3:
                     dashDirection = Vector3.left;
+                    getShapesRotation(0, 0, 0);
                     break;
                 case 4:
                     dashDirection = (Vector3.up + Vector3.left).normalized;
+                    getShapesRotation(45, 45, 0);
                     break;
                 case 5:
                     dashDirection = (Vector3.up + Vector3.right).normalized;
+                    getShapesRotation(135, 135, 0);
                     break;
                 case 6:
                     dashDirection = (Vector3.down + Vector3.left).normalized;
+                    getShapesRotation(225, 225, 0);
                     break;
                 case 7:
                     dashDirection = (Vector3.down + Vector3.right).normalized;
+                    getShapesRotation(315, 315, 0);
                     break;
             }
-            Debug.Log($"Casting ray from {transform.position} in direction {dashDirection} with distance {dashDistance}");
-            Debug.DrawRay(transform.position, dashDirection * dashDistance, Color.green, 0.5f);
-            Debug.DrawRay(transform.position, Vector3.up * 0.5f, Color.blue, 0.5f);
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, dashDirection, dashDistance, ~LayerMask.GetMask("Adventurer"));
-            Debug.Log($"Hit something: {hit.collider != null}, Layer mask: {~LayerMask.GetMask("Adventurer")}");
+            //Debug.Log($"Casting ray from {transform.position} in direction {dashDirection} with distance {dashDistance}");
+            //Debug.DrawRay(transform.position, dashDirection * dashDistance, Color.green, 0.5f);
+            //Debug.DrawRay(transform.position, Vector3.up * 0.5f, Color.blue, 0.5f);
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, dashDirection, dashDistance, ~LayerMask.GetMask("Adventurer")); // To ignore collision with player itself
+            //Debug.Log($"Hit something: {hit.collider != null}, Layer mask: {~LayerMask.GetMask("Adventurer")}");
 
                 
-            if (hit.collider == null)
+            if (hit.collider == null) // If there is no collision with an object in trajectory
             {
                 StartDash(dashDirection);
             }
-            else
+            else // If it will hit an object, stop right before it
             {
                 float adjustedDashDistance = hit.distance - 0.05f;
                 StartDash(dashDirection, adjustedDashDistance);
                 Debug.Log($"Dash blocked by: {hit.collider.gameObject.name}");
             }
                 
+        }
+
+        public void getShapesRotation(float x, float y, float z)
+        {
+            // To manipulate position of dash particles below
+            var shapes_prop = dashParticles.shape;
+
+            shapes_prop.rotation = new Vector3(x, y, z);
         }
         
     }
