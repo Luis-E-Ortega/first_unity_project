@@ -173,40 +173,50 @@ namespace Cainos.PixelArtTopDown_Basic
             Debug.Log($"CheckAndStartDash called with CurrentDirection: {CurrentDirection}, raw input: {Input.GetAxis("Vertical")}");
             // Determine the direction for the dash
             Vector3 dashDirection = Vector3.zero;
+            var shape = dashParticles.shape;
+            Vector3 defaultPosition = new Vector3(-0.00000047684f, 0.40905f, 0f);
 
             switch(CurrentDirection)
             {
                 case 0:
                     dashDirection = Vector3.down;
                     getShapesRotation(-90, -90, 0);
+                    shape.position = new Vector3(0, 1, 0); // Shift starting position of particles up
                     break;
                 case 1:
                     dashDirection = Vector3.up;
                     getShapesRotation(90, 90, 0);
+                    shape.position = defaultPosition;
                     break;
                 case 2:
                     dashDirection = Vector3.right;
-                    getShapesRotation(180, 180, 0);
+                    getShapesRotation(330, 330, 0);
+                    shape.position = new Vector3(-0.5f, 0, 0); // Shift starting position of particles left
                     break;
                 case 3:
                     dashDirection = Vector3.left;
-                    getShapesRotation(0, 0, 0);
+                    getShapesRotation(210, 210, 0);
+                    shape.position = new Vector3(0.5f, 0, 0); // Shift starting position of particles right
                     break;
                 case 4:
                     dashDirection = (Vector3.up + Vector3.left).normalized;
                     getShapesRotation(45, 45, 0);
+                    shape.position = defaultPosition; // Reset starting position of particles
                     break;
                 case 5:
                     dashDirection = (Vector3.up + Vector3.right).normalized;
                     getShapesRotation(135, 135, 0);
+                    shape.position = defaultPosition; // Reset starting position of particles  
                     break;
                 case 6:
                     dashDirection = (Vector3.down + Vector3.left).normalized;
                     getShapesRotation(225, 225, 0);
+                    shape.position = new Vector3(0.5f, 0.5f, 0); // Shift starting position of particles up and right 
                     break;
                 case 7:
                     dashDirection = (Vector3.down + Vector3.right).normalized;
                     getShapesRotation(315, 315, 0);
+                    shape.position = new Vector3(-0.5f, 0.5f, 0); // Shift starting position of particles up and left 
                     break;
             }
             //Debug.Log($"Casting ray from {transform.position} in direction {dashDirection} with distance {dashDistance}");
@@ -234,6 +244,7 @@ namespace Cainos.PixelArtTopDown_Basic
             // To manipulate position of dash particles below
             var shapes_prop = dashParticles.shape;
 
+            // Set the rotation for the particles based on degrees passed to method
             shapes_prop.rotation = new Vector3(x, y, z);
         }
         
