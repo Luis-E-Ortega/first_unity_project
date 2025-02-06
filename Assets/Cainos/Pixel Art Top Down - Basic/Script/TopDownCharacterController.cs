@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using System.Net.Http.Headers;
 using Unity.Collections;
+using Unity.Mathematics;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Rendering;
 
+
 namespace Cainos.PixelArtTopDown_Basic
 {
+    public enum ElementType {Fire, Earth, Wind, Water};
     public class TopDownCharacterController : MonoBehaviour
     {
         public float speed;
@@ -15,13 +19,21 @@ namespace Cainos.PixelArtTopDown_Basic
         private int CurrentDirection => animator.GetInteger("Direction");
 
         private Animator animator;
+        private SpriteRenderer spriteRenderer;
         public Rigidbody2D myRigidbody;
         public TrailRenderer trail;
         public ParticleSystem dashParticles;
+        public GameObject spellPoint; // The point to cast spells from
+        // References for spell prefabs
+        public ParticleSystem fireballPrefab;
+        public ParticleSystem waterballPrefab;
+        public ParticleSystem earthballPrefab;
+        public ParticleSystem windballPrefab;
 
         [SerializeField] private float dashDistance = 3f; // How far the dash will move the object
         [SerializeField] private float dashDuration = 0.1f; // How long the dash takes to complete
         [SerializeField] private float dashCooldown = 1f; // Time between dashes
+        [SerializeField] public ElementType elementMode;
         private bool canDash = true;
         private bool isDashing = false;
         private float dashTimer = 0f;
@@ -33,6 +45,11 @@ namespace Cainos.PixelArtTopDown_Basic
         {
             animator = GetComponent<Animator>();
             trail = GetComponent<TrailRenderer>();
+            spriteRenderer = GetComponent<SpriteRenderer>();
+            if (spriteRenderer == null)
+            {
+                Debug.LogError("No SpriteRenderer found on this GameObject!");
+            }
             trail.enabled = false;
             dashParticles.Stop(true); // Ensure that particles aren't played on start
 
@@ -41,6 +58,18 @@ namespace Cainos.PixelArtTopDown_Basic
 
 
         private void Update()
+        {
+            HandleMovement(); // Consolidated movement code to a different method
+
+            setElementMode(); // To monitor keypresses in case element mode is registered to change
+
+            if(Input.GetMouseButtonDown(1))
+            {
+                CheckAndStartSpell();
+            }
+
+        }
+        private void HandleMovement()
         {
             Vector2 dir = Vector2.zero;
             if (Input.GetKey(KeyCode.A))
@@ -102,7 +131,7 @@ namespace Cainos.PixelArtTopDown_Basic
                     break;
             }
             dir.Normalize(); // Normalize after direction is set, for smooth movement 
-            Debug.Log($"Current dir values: x={dir.x}, y={dir.y}");
+            //Debug.Log($"Current dir values: x={dir.x}, y={dir.y}");
 
 
             animator.SetBool("IsMoving", dir.magnitude > 0);
@@ -246,6 +275,115 @@ namespace Cainos.PixelArtTopDown_Basic
 
             // Set the rotation for the particles based on degrees passed to method
             shapes_prop.rotation = new Vector3(x, y, z);
+        }
+        public void setSpellShapesRotation(float x, float y, float z)
+        {
+            Vector3 newRotation = new Vector3(x, y, z);
+            // Create references to change the rotation of each element
+            ParticleSystem.ShapeModule fireShape = fireballPrefab.shape;
+            ParticleSystem.ShapeModule waterShape = waterballPrefab.shape;
+            ParticleSystem.ShapeModule earthShape = earthballPrefab.shape;
+            ParticleSystem.ShapeModule windShape = windballPrefab.shape;
+
+            fireShape.rotation = newRotation;
+            waterShape.rotation = newRotation;
+            earthShape.rotation = newRotation;
+            windShape.rotation = newRotation;
+        }
+
+        public void setElementMode()
+        {
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                elementMode = ElementType.Fire;
+                spriteRenderer.color = Color.red;
+            }
+            else if (Input.GetKeyDown(KeyCode.E))
+            {
+                elementMode = ElementType.Earth;
+                spriteRenderer.color = Color.green;
+            }
+            else if (Input.GetKeyDown(KeyCode.X))
+            {
+                elementMode = ElementType.Wind;
+                spriteRenderer.color = Color.gray;
+            }
+            else if (Input.GetKeyDown(KeyCode.C))
+            {
+                elementMode = ElementType.Water;
+                spriteRenderer.color = Color.blue;
+            }
+        }
+        public void CheckAndStartSpell()
+        {
+            Debug.Log($"CheckAndStartSpell called with CurrentDirection: {CurrentDirection}, raw input: {Input.GetAxis("Vertical")}");
+
+            Vector3 defaultPosition = new Vector3(-0.00000047684f, 0.40905f, 0f);
+            setElementMode(); // Check for input to toggle different element modes
+            switch(CurrentDirection)
+            {
+                case 0:
+                    setSpellShapesRotation(-90, -90, 0);
+                    //fireBall.position = new Vector3(0, 1, 0); // Shift starting position of particles up
+                    spellPoint.transform.position = new Vector3(0, 1, 0); // Shift starting position of particles up
+                    break;
+                case 1:
+                    setSpellShapesRotation(90, 90, 0);
+                    spellPoint.transform.position = defaultPosition;
+                    break;
+                case 2:
+                    setSpellShapesRotation(330, 330, 0);
+                    spellPoint.transform.position = new Vector3(-0.5f, 0, 0); // Shift starting position of particles left
+                    break;
+                case 3:
+                    setSpellShapesRotation(210, 210, 0);
+                    spellPoint.transform.position = new Vector3(0.5f, 0, 0); // Shift starting position of particles right
+                    break;
+                case 4:
+                    setSpellShapesRotation(45, 45, 0);
+                    spellPoint.transform.position = defaultPosition; // Reset starting position of particles
+                    break;
+                case 5:
+                    setSpellShapesRotation(135, 135, 0);
+                    spellPoint.transform.position = defaultPosition; // Reset starting position of particles  
+                    break;
+                case 6:
+                    setSpellShapesRotation(225, 225, 0);
+                    spellPoint.transform.position = new Vector3(0.5f, 0.5f, 0); // Shift starting position of particles up and right 
+                    break;
+                case 7:
+                    setSpellShapesRotation(315, 315, 0);
+                    spellPoint.transform.position = new Vector3(-0.5f, 0.5f, 0); // Shift starting position of particles up and left 
+                    break;
+            }
+
+            StartSpell();
+        }    
+        public void StartSpell()
+        {
+            Debug.Log("Executing a spell!");
+            switch(elementMode)
+            {
+                case ElementType.Fire:
+                    ParticleSystem fireBallInstance = Instantiate(fireballPrefab, spellPoint.transform.position, Quaternion.identity);
+                    fireBallInstance.Play();
+                    break;
+                case ElementType.Water:
+                    ParticleSystem waterBallInstance = Instantiate(waterballPrefab, spellPoint.transform.position, Quaternion.identity);
+                    waterBallInstance.Play();
+                    break;
+                case ElementType.Earth:
+                    ParticleSystem earthBallInstance = Instantiate(earthballPrefab, spellPoint.transform.position, Quaternion.identity);
+                    earthBallInstance.Play();
+                    break;
+                case ElementType.Wind:
+                    ParticleSystem windBallInstance = Instantiate(windballPrefab, spellPoint.transform.position, Quaternion.identity);
+                    windBallInstance.Play();
+                    break;
+                default:
+                    Debug.LogWarning($"Unkown element type: {elementMode}");
+                    break;
+            }
         }
         
     }
