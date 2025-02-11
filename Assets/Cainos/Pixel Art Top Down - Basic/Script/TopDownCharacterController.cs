@@ -278,12 +278,13 @@ namespace Cainos.PixelArtTopDown_Basic
         }
         public void setSpellShapesRotation(float x, float y, float z)
         {
-            Vector3 newRotation = new Vector3(x, y, z);
             // Create references to change the rotation of each element
             ParticleSystem.ShapeModule fireShape = fireballPrefab.shape;
             ParticleSystem.ShapeModule waterShape = waterballPrefab.shape;
             ParticleSystem.ShapeModule earthShape = earthballPrefab.shape;
             ParticleSystem.ShapeModule windShape = windballPrefab.shape;
+
+            Vector3 newRotation = new Vector3(x, y, z);
 
             fireShape.rotation = newRotation;
             waterShape.rotation = newRotation;
@@ -317,43 +318,41 @@ namespace Cainos.PixelArtTopDown_Basic
         public void CheckAndStartSpell()
         {
             Debug.Log($"CheckAndStartSpell called with CurrentDirection: {CurrentDirection}, raw input: {Input.GetAxis("Vertical")}");
-
             Vector3 defaultPosition = new Vector3(-0.00000047684f, 0.40905f, 0f);
             setElementMode(); // Check for input to toggle different element modes
             switch(CurrentDirection)
             {
                 case 0:
-                    setSpellShapesRotation(-90, -90, 0);
-                    //fireBall.position = new Vector3(0, 1, 0); // Shift starting position of particles up
-                    spellPoint.transform.position = new Vector3(0, 1, 0); // Shift starting position of particles up
+                    setSpellShapesRotation(90, 90, 0); // Facing down
+                    spellPoint.transform.localPosition = new Vector3(0, -1, 0); // Shift starting position of particles up
                     break;
                 case 1:
-                    setSpellShapesRotation(90, 90, 0);
-                    spellPoint.transform.position = defaultPosition;
+                    setSpellShapesRotation(-90, -90, 0); // Facing up
+                    spellPoint.transform.localPosition = new Vector3(0, 1, 0); // Shift starting position of particles down
                     break;
                 case 2:
-                    setSpellShapesRotation(330, 330, 0);
-                    spellPoint.transform.position = new Vector3(-0.5f, 0, 0); // Shift starting position of particles left
+                    setSpellShapesRotation(0, 90, 0); // Facing right
+                    spellPoint.transform.localPosition = new Vector3(0.5f, 0, 0); // Shift starting position of particles right
                     break;
                 case 3:
-                    setSpellShapesRotation(210, 210, 0);
-                    spellPoint.transform.position = new Vector3(0.5f, 0, 0); // Shift starting position of particles right
+                    setSpellShapesRotation(180, 90, 0); // Facing left
+                    spellPoint.transform.localPosition = new Vector3(-0.5f, 0, 0); // Shift starting position of particles left
                     break;
                 case 4:
-                    setSpellShapesRotation(45, 45, 0);
-                    spellPoint.transform.position = defaultPosition; // Reset starting position of particles
+                    setSpellShapesRotation(-45, -45, 0); // Facing up left
+                    spellPoint.transform.localPosition = new Vector3(-0.5f, 0, 0); // Shift starting position of particles left
                     break;
                 case 5:
-                    setSpellShapesRotation(135, 135, 0);
-                    spellPoint.transform.position = defaultPosition; // Reset starting position of particles  
+                    setSpellShapesRotation(-135, -135, 0); // Facing up right
+                    spellPoint.transform.localPosition = new Vector3(0.5f, 0, 0); // Reset starting position of particles  
                     break;
                 case 6:
-                    setSpellShapesRotation(225, 225, 0);
-                    spellPoint.transform.position = new Vector3(0.5f, 0.5f, 0); // Shift starting position of particles up and right 
+                    setSpellShapesRotation(135, 135, 0);
+                    spellPoint.transform.localPosition = new Vector3(-0.5f, -0.5f, 0); // Shift starting position of particles down left
                     break;
                 case 7:
-                    setSpellShapesRotation(315, 315, 0);
-                    spellPoint.transform.position = new Vector3(-0.5f, 0.5f, 0); // Shift starting position of particles up and left 
+                    setSpellShapesRotation(45, 45, 0);
+                    spellPoint.transform.localPosition = new Vector3(0.5f, -0.5f, 0); // Shift starting position of particles down right
                     break;
             }
 
@@ -366,18 +365,22 @@ namespace Cainos.PixelArtTopDown_Basic
             {
                 case ElementType.Fire:
                     ParticleSystem fireBallInstance = Instantiate(fireballPrefab, spellPoint.transform.position, Quaternion.identity);
+                    Debug.Log("Fireball explosion!");
                     fireBallInstance.Play();
                     break;
                 case ElementType.Water:
                     ParticleSystem waterBallInstance = Instantiate(waterballPrefab, spellPoint.transform.position, Quaternion.identity);
+                    Debug.Log("Water explosion!");
                     waterBallInstance.Play();
                     break;
                 case ElementType.Earth:
                     ParticleSystem earthBallInstance = Instantiate(earthballPrefab, spellPoint.transform.position, Quaternion.identity);
+                    Debug.Log("Earth explosion!");
                     earthBallInstance.Play();
                     break;
                 case ElementType.Wind:
                     ParticleSystem windBallInstance = Instantiate(windballPrefab, spellPoint.transform.position, Quaternion.identity);
+                    Debug.Log("Wind explosion!");
                     windBallInstance.Play();
                     break;
                 default:
