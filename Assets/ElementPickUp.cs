@@ -6,6 +6,8 @@ public class ElementPickUp : MonoBehaviour
     private InventoryController inventory;
     public ElementType elementType;
 
+    public BossBehavior bossBehavior; // Reference for boss spawning;
+
     
     void Start()
     {
@@ -32,6 +34,18 @@ public class ElementPickUp : MonoBehaviour
             AddToInventory();
             // Remove element from scene
             Destroy(gameObject);
+            ElementSpawner.activeOrbs--;
+
+            // Check if there are any orbs left on the screen for boss spawn trigger
+            if (ElementSpawner.activeOrbs == 0)
+            {
+                Debug.Log("activeOrbs is 0! Spawning boss...");
+                bossBehavior.SpawnBoss();
+            }
+            else
+            {
+                Debug.Log("activeOrbs remaining: " + ElementSpawner.activeOrbs);
+            }
         }
     }
     private void AddToInventory()

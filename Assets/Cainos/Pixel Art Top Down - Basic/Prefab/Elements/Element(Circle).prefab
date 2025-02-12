@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -4784746702377697466}
   m_Layer: 20
   m_Name: Element(Circle)
-  m_TagString: Untagged
+  m_TagString: ElementalOrb
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -138,5 +138,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b90cc56a584136543af42a6f3470de57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  elementType: 
-  elementPrefab: {fileID: 3723567008298582218}
+  elementType: 0

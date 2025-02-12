@@ -6,10 +6,14 @@ public class ElementSpawner : MonoBehaviour
 {
     // For setting which object to generate in inspector
     [SerializeField] private GameObject elementPrefab;
+    public BossBehavior bossBehavior; // Reference for boss spawning
+
     // For setting how many objects to spawn 
-    [SerializeField] public int numberOfOrbs;
+    [SerializeField] public int initialOrbCount;
     [SerializeField] private ElementData elementData;
     private Dictionary<ElementType, ElementData.ElementProperties> elementProperties;
+
+    public static int activeOrbs = 0;
 
     private void Awake()
     {
@@ -27,7 +31,9 @@ public class ElementSpawner : MonoBehaviour
 
     private void SpawnElements()
     {
-        for (int i = 0; i < numberOfOrbs; i++)
+        activeOrbs = initialOrbCount;
+
+        for (int i = 0; i < initialOrbCount; i++)
         {
             Vector3 position = GetValidRandomPosition();
             SpawnElementAtPosition(position);
@@ -61,6 +67,10 @@ public class ElementSpawner : MonoBehaviour
         GameObject newElement = Instantiate(elementPrefab, position, Quaternion.identity);
         ElementPickUp elementComponent = newElement.GetComponent<ElementPickUp>();
         SpriteRenderer spriteRenderer = newElement.GetComponent<SpriteRenderer>();
+
+        // Reference for spawning boss
+        elementComponent.bossBehavior = bossBehavior;
+
 
         // Get random element
         ElementType randomType = GetRandomElement();
