@@ -41,19 +41,19 @@ public class ElementSpawner : MonoBehaviour
                     switch (randomType)
                     {
                         case 1: // Water type
-                            elementComponent.elementType = "water";
+                            elementComponent.elementType = ElementType.Water;
                             spriteRenderer.color = Color.blue;
                             break;
                         case 2: // Fire type
-                            elementComponent.elementType = "fire";
+                            elementComponent.elementType = ElementType.Fire;
                             spriteRenderer.color = Color.red;
                             break;
                         case 3: // Earth type
-                            elementComponent.elementType = "earth";
+                            elementComponent.elementType = ElementType.Earth;
                             spriteRenderer.color = Color.green;
                             break;
                         case 4: // Wind type
-                            elementComponent.elementType = "wind";
+                            elementComponent.elementType = ElementType.Wind;
                             spriteRenderer.color = Color.gray;
                             break;
                     }

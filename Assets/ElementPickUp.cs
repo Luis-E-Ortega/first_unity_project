@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 public class ElementPickUp : MonoBehaviour
 {
     private InventoryController inventory;
-    public string elementType;
+    public ElementType elementType;
 
     
     void Start()

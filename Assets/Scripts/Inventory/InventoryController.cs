@@ -1,9 +1,11 @@
+using System.Collections.Generic;
+using Cainos.PixelArtTopDown_Basic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class InventoryController : MonoBehaviour
 {
-    public GameObject inventoryPanel;
+    [SerializeField] private GameObject inventoryPanel;
     public bool inv_showing = false;
     public GameObject slotPrefab;
 
@@ -11,6 +13,8 @@ public class InventoryController : MonoBehaviour
     public Sprite fireSprite;
     public Sprite earthSprite;
     public Sprite windSprite;
+
+    private Dictionary<ElementType, int> elementCounts = new Dictionary<ElementType, int>();
 
     private void Start()
     {
@@ -31,58 +35,76 @@ public class InventoryController : MonoBehaviour
             inventoryPanel.SetActive(inv_showing);
         }
     }
-    // Leaving AddItem as a reference for code or later use
-    public void AddItem()
-    {
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            GridLayoutGroup grid = inventoryPanel.GetComponent<GridLayoutGroup>();
-        
-            if (grid == null)
-            {
-                Debug.LogError("No GridLayoutGroup found on inventoryPanel!");
-                return;
-            }
 
-            GameObject newSlot = Instantiate(slotPrefab, inventoryPanel.transform);
-
-            Debug.Log("Added new slot: " + newSlot.name);
-
-            foreach(Transform child in inventoryPanel.transform)
-            {
-                Debug.Log("Found a grid cell: " + child.name);
-            }
-        }
-    }
-
-    public void AddItemToInventory(string elementType)
+    public void AddItemToInventory(ElementType elementType)
     {
         GridLayoutGroup grid = inventoryPanel.GetComponent<GridLayoutGroup>();
-        GameObject newSlot = Instantiate(slotPrefab, inventoryPanel.transform);
-        Image slotImage = newSlot.GetComponent<Image>();
-
-        switch(elementType)
-        {
-            case "water":
-                slotImage.sprite = waterSprite;
-                break;
-            case "fire":
-                slotImage.sprite = fireSprite;
-                break;
-            case "earth":
-                slotImage.sprite = earthSprite;
-                break;
-            case "wind":
-                slotImage.sprite = windSprite;
-                break;
-        }
-        Debug.Log("Added new slot: " + newSlot.name);
-
         if (grid == null)
         {
             Debug.LogError("No GridLayoutGroup found on inventoryPanel");
             return;
         }
+        GameObject newSlot = Instantiate(slotPrefab, inventoryPanel.transform);
+        Image slotImage = newSlot.GetComponent<Image>();
+
+        switch(elementType)
+        {
+            case ElementType.Water:
+                slotImage.sprite = waterSprite;
+                break;
+            case ElementType.Fire:
+                slotImage.sprite = fireSprite;
+                break;
+            case ElementType.Earth:
+                slotImage.sprite = earthSprite;
+                break;
+            case ElementType.Wind:
+                slotImage.sprite = windSprite;
+                break;
+        }
+        if (elementCounts.ContainsKey(elementType))
+            elementCounts[elementType]++; // Increment element count for that type if it exists
+        else
+            elementCounts[elementType] = 1; // Add a new element if it doesn't exist
+        Debug.Log("Added new slot: " + newSlot.tag);
+    }
+    public bool HasElement(ElementType type)
+    {
+        return elementCounts.ContainsKey(type) && elementCounts[type] > 0;
+    }
+    
+    public void UseElement(ElementType type)
+    {
+        if (HasElement(type))
+        {
+            elementCounts[type]--;
+
+            // Get the grid layout and its children
+            GridLayoutGroup grid = inventoryPanel.GetComponent<GridLayoutGroup>();
+            Transform gridTransform = grid.transform;
+
+            // Find the last matching element added
+            for (int i = gridTransform.childCount -1; i >= 0; i--)
+            {
+                Transform child = gridTransform.GetChild(i);
+                Image image = child.GetComponent<Image>();
+
+                // Check if this is the correct element to remove
+                if (IsMatchingElementSprite(image.sprite, type))
+                {
+                    Destroy(child.gameObject);
+                    break; // Exit after removing one sprite
+                }
+            }
+        }
+    }
+
+    private bool IsMatchingElementSprite(Sprite sprite, ElementType type)
+    {
+        return  (type == ElementType.Water && sprite == waterSprite) ||
+                (type == ElementType.Fire && sprite == fireSprite) ||
+                (type == ElementType.Earth && sprite == earthSprite) ||
+                (type == ElementType.Wind && sprite == windSprite);
     }
 
 }

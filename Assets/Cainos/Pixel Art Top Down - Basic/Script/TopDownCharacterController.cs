@@ -11,7 +11,7 @@ using UnityEngine.Rendering;
 
 namespace Cainos.PixelArtTopDown_Basic
 {
-    public enum ElementType {Fire, Earth, Wind, Water};
+    //public enum ElementType {Fire, Earth, Wind, Water};
     public class TopDownCharacterController : MonoBehaviour
     {
         public float speed;
@@ -33,13 +33,15 @@ namespace Cainos.PixelArtTopDown_Basic
         [SerializeField] private float dashDistance = 3f; // How far the dash will move the object
         [SerializeField] private float dashDuration = 0.1f; // How long the dash takes to complete
         [SerializeField] private float dashCooldown = 1f; // Time between dashes
-        [SerializeField] public ElementType elementMode;
+        private ElementType elementMode;
         private bool canDash = true;
         private bool isDashing = false;
         private float dashTimer = 0f;
         private float cooldownTimer = 0f;
         private Vector3 dashStartPosition;
         private Vector3 dashTargetPosition;
+
+        [SerializeField] private InventoryController inventory; // To pull data from inventory controller
 
         private void Start()
         {
@@ -319,7 +321,6 @@ namespace Cainos.PixelArtTopDown_Basic
         {
             Debug.Log($"CheckAndStartSpell called with CurrentDirection: {CurrentDirection}, raw input: {Input.GetAxis("Vertical")}");
             Vector3 defaultPosition = new Vector3(-0.00000047684f, 0.40905f, 0f);
-            setElementMode(); // Check for input to toggle different element modes
             switch(CurrentDirection)
             {
                 case 0:
@@ -360,26 +361,36 @@ namespace Cainos.PixelArtTopDown_Basic
         }    
         public void StartSpell()
         {
+            //First checks if element is available
+            if (!inventory.HasElement(elementMode))
+            {
+                Debug.Log("Not enough elements to cast this spell!");
+                return;
+            }
             Debug.Log("Executing a spell!");
             switch(elementMode)
             {
                 case ElementType.Fire:
                     ParticleSystem fireBallInstance = Instantiate(fireballPrefab, spellPoint.transform.position, Quaternion.identity);
+                    inventory.UseElement(ElementType.Fire); // Consume the element
                     Debug.Log("Fireball explosion!");
                     fireBallInstance.Play();
                     break;
                 case ElementType.Water:
                     ParticleSystem waterBallInstance = Instantiate(waterballPrefab, spellPoint.transform.position, Quaternion.identity);
+                    inventory.UseElement(ElementType.Water); 
                     Debug.Log("Water explosion!");
                     waterBallInstance.Play();
                     break;
                 case ElementType.Earth:
                     ParticleSystem earthBallInstance = Instantiate(earthballPrefab, spellPoint.transform.position, Quaternion.identity);
+                    inventory.UseElement(ElementType.Earth);
                     Debug.Log("Earth explosion!");
                     earthBallInstance.Play();
                     break;
                 case ElementType.Wind:
                     ParticleSystem windBallInstance = Instantiate(windballPrefab, spellPoint.transform.position, Quaternion.identity);
+                    inventory.UseElement(ElementType.Wind);
                     Debug.Log("Wind explosion!");
                     windBallInstance.Play();
                     break;
