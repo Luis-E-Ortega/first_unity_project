@@ -14,6 +14,15 @@ public class InventoryController : MonoBehaviour
     public Sprite earthSprite;
     public Sprite windSprite;
 
+    [SerializeField] private ElementData elementData;
+    private Dictionary<ElementType, ElementData.ElementProperties> elementProperties;
+
+    private void Awake()
+    {
+        elementProperties = elementData.GetElementProperties();
+    }
+
+
     private Dictionary<ElementType, int> elementCounts = new Dictionary<ElementType, int>();
 
     private void Start()

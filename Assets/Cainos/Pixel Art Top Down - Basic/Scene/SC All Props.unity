@@ -1387,6 +1387,7 @@ MonoBehaviour:
   elementPrefab: {fileID: 3723567008298582218, guid: 28b76c0602c2e5849b93ef6591cb479c,
     type: 3}
   numberOfOrbs: 20
+  elementData: {fileID: 11400000, guid: aaa8fbb9759553b47accb432b1c4e4ef, type: 2}
 --- !u!4 &236453221
 Transform:
   m_ObjectHideFlags: 0
@@ -1481,79 +1482,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 250884614}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &252313199
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 3956144976825544138, guid: 9400c458d9a829641832e500f343531a,
-        type: 3}
-      propertyPath: ShapeModule.m_Rotation.y
-      value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 5271514187592783923, guid: 9400c458d9a829641832e500f343531a,
-        type: 3}
-      propertyPath: m_Name
-      value: FireBallSpell
-      objectReference: {fileID: 0}
-    - target: {fileID: 7114232135643739372, guid: 9400c458d9a829641832e500f343531a,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 31.472141
-      objectReference: {fileID: 0}
-    - target: {fileID: 7114232135643739372, guid: 9400c458d9a829641832e500f343531a,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 6.097885
-      objectReference: {fileID: 0}
-    - target: {fileID: 7114232135643739372, guid: 9400c458d9a829641832e500f343531a,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7114232135643739372, guid: 9400c458d9a829641832e500f343531a,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7114232135643739372, guid: 9400c458d9a829641832e500f343531a,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7114232135643739372, guid: 9400c458d9a829641832e500f343531a,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7114232135643739372, guid: 9400c458d9a829641832e500f343531a,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7114232135643739372, guid: 9400c458d9a829641832e500f343531a,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7114232135643739372, guid: 9400c458d9a829641832e500f343531a,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7114232135643739372, guid: 9400c458d9a829641832e500f343531a,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 9400c458d9a829641832e500f343531a, type: 3}
 --- !u!1 &263159334
 GameObject:
   m_ObjectHideFlags: 0
@@ -7422,6 +7350,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 5271514187592783923, guid: 9400c458d9a829641832e500f343531a,
         type: 3}
+    - target: {fileID: 5628018141983903119, guid: ef67ba864d1ecc042b5f4cf48455c0a6,
+        type: 3}
+      propertyPath: inventory
+      value: 
+      objectReference: {fileID: 1471161961}
     - target: {fileID: 5628018141983903119, guid: ef67ba864d1ecc042b5f4cf48455c0a6,
         type: 3}
       propertyPath: spellPoint
@@ -15460,6 +15393,7 @@ MonoBehaviour:
   earthSprite: {fileID: 4225585547303986467, guid: 645ea22394184174fa4eba837b8efdb7,
     type: 3}
   windSprite: {fileID: 21300000, guid: 84d8a2ff19ac7bd4d962169bbcc8d38d, type: 3}
+  elementData: {fileID: 11400000, guid: aaa8fbb9759553b47accb432b1c4e4ef, type: 2}
 --- !u!4 &1471161962
 Transform:
   m_ObjectHideFlags: 0
@@ -19686,7 +19620,7 @@ PrefabInstance:
     - target: {fileID: -4784746702377697466, guid: 28b76c0602c2e5849b93ef6591cb479c,
         type: 3}
       propertyPath: elementType
-      value: 
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3468088851175832770, guid: 28b76c0602c2e5849b93ef6591cb479c,
         type: 3}
@@ -19764,4 +19698,3 @@ SceneRoots:
   - {fileID: 1471161962}
   - {fileID: 4271116174865686470}
   - {fileID: 236453221}
-  - {fileID: 252313199}

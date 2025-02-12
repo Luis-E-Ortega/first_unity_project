@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9dab07c22015c2f409a647fe3af4b1b9, type: 3}
+  m_Name: ElementData
+  m_EditorClassIdentifier: 
+  waterSprite: {fileID: 1531737230055027811, guid: 7864b1da5d459a34cbcd7fff75ea643f,
+    type: 3}
+  fireSprite: {fileID: -3181523566747969945, guid: 2d78e6417e59f644dbf56756784b8088,
+    type: 3}
+  earthSprite: {fileID: 4225585547303986467, guid: 645ea22394184174fa4eba837b8efdb7,
+    type: 3}
+  windSprite: {fileID: 21300000, guid: 84d8a2ff19ac7bd4d962169bbcc8d38d, type: 3}
