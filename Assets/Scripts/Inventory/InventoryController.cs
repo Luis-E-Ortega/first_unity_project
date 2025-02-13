@@ -26,8 +26,7 @@ public class InventoryController : MonoBehaviour
     private Dictionary<ElementType, int> elementCounts = new Dictionary<ElementType, int>();
 
     private void Start()
-    {
-        Debug.Log("Start method called");  
+    { 
         inventoryPanel.SetActive(inv_showing);
     }
     private void Update()
@@ -38,8 +37,6 @@ public class InventoryController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.I))
         {
-            Debug.Log("I key was pressed");
-            Debug.Log("Panel active state: " + inventoryPanel.activeSelf);
             inv_showing = !inv_showing;
             inventoryPanel.SetActive(inv_showing);
         }
@@ -75,7 +72,6 @@ public class InventoryController : MonoBehaviour
             elementCounts[elementType]++; // Increment element count for that type if it exists
         else
             elementCounts[elementType] = 1; // Add a new element if it doesn't exist
-        Debug.Log("Added new slot: " + newSlot.tag);
     }
     public bool HasElement(ElementType type)
     {

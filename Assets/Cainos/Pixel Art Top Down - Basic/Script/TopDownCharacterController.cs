@@ -33,7 +33,7 @@ namespace Cainos.PixelArtTopDown_Basic
         [SerializeField] private float dashDistance = 3f; // How far the dash will move the object
         [SerializeField] private float dashDuration = 0.1f; // How long the dash takes to complete
         [SerializeField] private float dashCooldown = 1f; // Time between dashes
-        private ElementType elementMode;
+        private ElementType elementType;
 
         private bool canDash = true;
         private bool isDashing = false;
@@ -102,35 +102,27 @@ namespace Cainos.PixelArtTopDown_Basic
             {
                 case (-1, 0):
                     animator.SetInteger("Direction", 3); // Left
-                    Debug.Log($"Switch case hit: (-1, 0), Setting Direction to 3");
                     break;
                 case (-1, 1):
                     animator.SetInteger("Direction", 4); // Up-left
-                    Debug.Log($"Switch case hit: (-1, 0), Setting Direction to 4");
                     break;
                 case (1, 0):
                     animator.SetInteger("Direction", 2); // Right
-                    Debug.Log($"Switch case hit: (-1, 0), Setting Direction to 2");
                     break;
                 case (1, 1):
                     animator.SetInteger("Direction", 5); // Up-right
-                    Debug.Log($"Switch case hit: (-1, 0), Setting Direction to 5");
                     break;
                 case (0, 1):
                     animator.SetInteger("Direction", 1); // Up
-                    Debug.Log($"Switch case hit: (-1, 0), Setting Direction to 1");
                     break;
                 case (0, -1):
                     animator.SetInteger("Direction", 0); // Down
-                    Debug.Log($"Switch case hit: (-1, 0), Setting Direction to 0");
                     break;
                 case (-1, -1):
                     animator.SetInteger("Direction", 6); // Down-left
-                    Debug.Log($"Switch case hit: (-1, 0), Setting Direction to 6");
                     break;
                 case (1, -1):
                     animator.SetInteger("Direction", 7); // Down-right
-                    Debug.Log($"Switch case hit: (-1, 0), Setting Direction to 7");
                     break;
             }
             dir.Normalize(); // Normalize after direction is set, for smooth movement 
@@ -202,7 +194,6 @@ namespace Cainos.PixelArtTopDown_Basic
 
         private void CheckAndStartDash()
         {
-            Debug.Log($"CheckAndStartDash called with CurrentDirection: {CurrentDirection}, raw input: {Input.GetAxis("Vertical")}");
             // Determine the direction for the dash
             Vector3 dashDirection = Vector3.zero;
             var shape = dashParticles.shape;
@@ -266,7 +257,7 @@ namespace Cainos.PixelArtTopDown_Basic
             {
                 float adjustedDashDistance = hit.distance - 0.05f;
                 StartDash(dashDirection, adjustedDashDistance);
-                Debug.Log($"Dash blocked by: {hit.collider.gameObject.name}");
+                //Debug.Log($"Dash blocked by: {hit.collider.gameObject.name}");
             }
                 
         }
@@ -299,28 +290,27 @@ namespace Cainos.PixelArtTopDown_Basic
         {
             if (Input.GetKeyDown(KeyCode.F))
             {
-                elementMode = ElementType.Fire;
+                elementType = ElementType.Fire;
                 spriteRenderer.color = Color.red;
             }
             else if (Input.GetKeyDown(KeyCode.E))
             {
-                elementMode = ElementType.Earth;
+                elementType = ElementType.Earth;
                 spriteRenderer.color = Color.green;
             }
             else if (Input.GetKeyDown(KeyCode.X))
             {
-                elementMode = ElementType.Wind;
+                elementType = ElementType.Wind;
                 spriteRenderer.color = Color.gray;
             }
             else if (Input.GetKeyDown(KeyCode.C))
             {
-                elementMode = ElementType.Water;
+                elementType = ElementType.Water;
                 spriteRenderer.color = Color.blue;
             }
         }
         public void CheckAndStartSpell()
         {
-            Debug.Log($"CheckAndStartSpell called with CurrentDirection: {CurrentDirection}, raw input: {Input.GetAxis("Vertical")}");
             Vector3 defaultPosition = new Vector3(-0.00000047684f, 0.40905f, 0f);
             switch(CurrentDirection)
             {
@@ -363,40 +353,35 @@ namespace Cainos.PixelArtTopDown_Basic
         public void StartSpell()
         {
             //First checks if element is available
-            if (!inventory.HasElement(elementMode))
+            if (!inventory.HasElement(elementType))
             {
                 Debug.Log("Not enough elements to cast this spell!");
                 return;
             }
-            Debug.Log("Executing a spell!");
-            switch(elementMode)
+            switch(elementType)
             {
                 case ElementType.Fire:
                     ParticleSystem fireBallInstance = Instantiate(fireballPrefab, spellPoint.transform.position, Quaternion.identity);
                     inventory.UseElement(ElementType.Fire); // Consume the element
-                    Debug.Log("Fireball explosion!");
                     fireBallInstance.Play();
                     break;
                 case ElementType.Water:
                     ParticleSystem waterBallInstance = Instantiate(waterballPrefab, spellPoint.transform.position, Quaternion.identity);
                     inventory.UseElement(ElementType.Water); 
-                    Debug.Log("Water explosion!");
                     waterBallInstance.Play();
                     break;
                 case ElementType.Earth:
                     ParticleSystem earthBallInstance = Instantiate(earthballPrefab, spellPoint.transform.position, Quaternion.identity);
                     inventory.UseElement(ElementType.Earth);
-                    Debug.Log("Earth explosion!");
                     earthBallInstance.Play();
                     break;
                 case ElementType.Wind:
                     ParticleSystem windBallInstance = Instantiate(windballPrefab, spellPoint.transform.position, Quaternion.identity);
                     inventory.UseElement(ElementType.Wind);
-                    Debug.Log("Wind explosion!");
                     windBallInstance.Play();
                     break;
                 default:
-                    Debug.LogWarning($"Unkown element type: {elementMode}");
+                    Debug.LogWarning($"Unkown element type: {elementType}");
                     break;
             }
         }
