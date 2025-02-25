@@ -40,7 +40,16 @@ public class ElementPickUp : MonoBehaviour
             if (ElementSpawner.activeOrbs == 0)
             {
                 Debug.Log("activeOrbs is 0! Spawning boss...");
-                bossBehavior.SpawnBoss();
+                //bossBehavior.SpawnBoss();
+                if (bossBehavior != null)
+                {
+                    Debug.Log("Boss reference found, starting spawn");
+                    StartCoroutine(bossBehavior.SpawnBoss());
+                }
+                else
+                {
+                    Debug.Log("Boss reference missing!");
+                }
             }
             else
             {

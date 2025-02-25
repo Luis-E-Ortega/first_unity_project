@@ -33,7 +33,7 @@ namespace Cainos.PixelArtTopDown_Basic
         [SerializeField] private float dashDistance = 3f; // How far the dash will move the object
         [SerializeField] private float dashDuration = 0.1f; // How long the dash takes to complete
         [SerializeField] private float dashCooldown = 1f; // Time between dashes
-        private ElementType elementType;
+        public ElementType elementType;
 
         private bool canDash = true;
         private bool isDashing = false;

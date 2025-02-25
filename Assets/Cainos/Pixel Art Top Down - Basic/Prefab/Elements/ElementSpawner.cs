@@ -79,7 +79,7 @@ public class ElementSpawner : MonoBehaviour
         elementComponent.elementType = randomType;
         spriteRenderer.color = elementProperties[randomType].Color;
     }
-    private ElementType GetRandomElement()
+    public ElementType GetRandomElement()
     {
         // Get all the possible element types as an array
         ElementType[] elements = (ElementType[])System.Enum.GetValues(typeof(ElementType));

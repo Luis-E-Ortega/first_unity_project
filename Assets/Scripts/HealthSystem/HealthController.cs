@@ -2,28 +2,61 @@ using UnityEngine;
 
 public class HealthController : MonoBehaviour
 {
-    private int maximumHealth;
     private int currentHealth;
+    public int CurrentHealth {get {return currentHealth; } }
 
-    private void DealDamage(int damage)
+    [SerializeField] private int maximumHealth;
+    [SerializeField] private bool isPlayer; // To set as player character in inspector
+
+
+    public void DealDamage(int damage)
     {
-
+        if (currentHealth - damage <= 0)
+        {
+            OnDeath();
+        }
+        else
+        {
+            currentHealth -= damage;
+        }
     }
 
-    private void HealDamage(int healing)
+    public void HealDamage(int healing)
     {
-
+        if((currentHealth + healing) <= maximumHealth)
+        {
+            currentHealth += healing;
+        }
+        else
+        {
+            currentHealth = maximumHealth;
+        }
     }
 
     private bool IsDead()
     {
-        if (currentHealth == 0)
+        return currentHealth <= 0;
+    }
+
+    void Start()
+    {
+        Debug.Log($"Health Controller initialized with health: {currentHealth}");
+    }
+    void Awake()
+    {
+        currentHealth = maximumHealth;
+        Debug.Log($"HealthController Start - currentHealth set to: {currentHealth}");
+    }
+
+    private void OnDeath()
+    {
+        if (isPlayer)
         {
-            return true;
+            GameManager.Instance.ShowGameOver();
         }
         else
         {
-            return false;
+            // Boss death logic
         }
     }
 }
