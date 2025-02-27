@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using Cainos.PixelArtTopDown_Basic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class BossBehavior : MonoBehaviour
 {
@@ -16,8 +17,15 @@ public class BossBehavior : MonoBehaviour
 
     public ElementType elementType;
     private SpriteRenderer spriteRenderer;
-    private HealthController bossHealth;
+    [SerializeField] private HealthController bossHealth;
+    [SerializeField] private HealthController playerHealth;
     [SerializeField] private ElementSpawner elementSpawner;
+    [SerializeField] private Tilemap grassTilemap;
+
+    [SerializeField] private TopDownCharacterController player;
+
+    private int fullDamage = 50;
+    private int partialDamage = 10;
   
 
     void Awake()
@@ -84,39 +92,87 @@ public class BossBehavior : MonoBehaviour
             {
                 case ElementType.Fire:
                     auraRenderer.material.color = Color.red;
+                    grassTilemap.color = Color.white;
                     yield return new WaitForSeconds(phaseIntervalTime); // 2 second telegraph
                     elementType = ElementType.Fire; // Switch element type
                     spriteRenderer.color = Color.red; // Match color to type
                     aoeRenderer.material.color = Color.red;
                     aoe.Clear();
                     aoe.Play();
+                    grassTilemap.color = Color.red;
+                    if (player.elementType != ElementType.Fire)
+                    {
+                        Debug.Log("Dealing full damage!");
+                        playerHealth.DealDamage(fullDamage);
+                    }
+                    else
+                    {
+                        Debug.Log("Dealing only partial damage!");
+                        playerHealth.DealDamage(partialDamage);
+                    }
                     break;
                 case ElementType.Water:
                     auraRenderer.material.color = Color.blue;
+                    grassTilemap.color = Color.white;
                     yield return new WaitForSeconds(phaseIntervalTime);
                     elementType = ElementType.Water;
                     spriteRenderer.color = Color.blue;
                     aoeRenderer.material.color = Color.blue;
                     aoe.Clear();
                     aoe.Play();
+                    grassTilemap.color = Color.blue;
+                    if (player.elementType != ElementType.Water)
+                    {
+                        Debug.Log("Dealing full damage!");
+                        playerHealth.DealDamage(fullDamage);
+                    }
+                    else
+                    {
+                        Debug.Log("Dealing only partial damage!");
+                        playerHealth.DealDamage(partialDamage);
+                    }
                     break;
                 case ElementType.Earth:
                     auraRenderer.material.color = Color.green;
+                    grassTilemap.color = Color.white;
                     yield return new WaitForSeconds(phaseIntervalTime);
                     elementType = ElementType.Earth;
                     spriteRenderer.color = Color.green;
                     aoeRenderer.material.color = Color.green;
                     aoe.Clear();
                     aoe.Play();
+                    grassTilemap.color = Color.green;
+                    if (player.elementType != ElementType.Earth)
+                    {
+                        Debug.Log("Dealing full damage!");
+                        playerHealth.DealDamage(fullDamage);
+                    }
+                    else
+                    {
+                        Debug.Log("Dealing only partial damage!");
+                        playerHealth.DealDamage(partialDamage);
+                    }
                     break;
                 case ElementType.Wind:
                     auraRenderer.material.color = Color.white;
+                    grassTilemap.color = Color.white;
                     yield return new WaitForSeconds(phaseIntervalTime);
                     elementType = ElementType.Wind;
                     spriteRenderer.color = Color.white;
                     aoeRenderer.material.color = Color.white;
                     aoe.Clear();
                     aoe.Play();
+                    grassTilemap.color = Color.grey;
+                    if (player.elementType != ElementType.Wind)
+                    {
+                        Debug.Log("Dealing full damage!");
+                        playerHealth.DealDamage(fullDamage);
+                    }
+                    else
+                    {
+                        Debug.Log("Dealing only partial damage!");
+                        playerHealth.DealDamage(partialDamage);
+                    }
                     break;
             }
             yield return new WaitForSeconds(Random.Range(minTime, maxTime)); // Random interval between swaps

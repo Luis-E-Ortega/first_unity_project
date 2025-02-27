@@ -1,5 +1,6 @@
 using Cainos.PixelArtTopDown_Basic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class AoECollisionHandler : MonoBehaviour
 {
@@ -8,10 +9,12 @@ public class AoECollisionHandler : MonoBehaviour
     private TopDownCharacterController player;
     [SerializeField] private int damageFull = 100;
     [SerializeField] private int damagePartial = 20;
+
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<TopDownCharacterController>();
         boss = GameObject.FindGameObjectWithTag("Boss").GetComponent<BossBehavior>();
+
         if (player != null)
         {
             playerHealth = player.GetComponent<HealthController>();
@@ -23,10 +26,9 @@ public class AoECollisionHandler : MonoBehaviour
         }
     }
 
+
     private void OnParticleCollision(GameObject other)
     {
-        Debug.Log("Hit ANYTHING");
-        Debug.Log("Particle hit something: " + other.name);
         if (other.CompareTag("Player"))
         {
             if (player.elementType == boss.elementType)
@@ -43,5 +45,6 @@ public class AoECollisionHandler : MonoBehaviour
             }
         }
     }
+
 }
 

@@ -22,7 +22,7 @@ namespace Cainos.PixelArtTopDown_Basic
         private SpriteRenderer spriteRenderer;
         public Rigidbody2D myRigidbody;
         public TrailRenderer trail;
-        public ParticleSystem dashParticles;
+        private ParticleSystem dashParticles;
         public GameObject spellPoint; // The point to cast spells from
         // References for spell prefabs
         public ParticleSystem fireballPrefab;
@@ -34,6 +34,9 @@ namespace Cainos.PixelArtTopDown_Basic
         [SerializeField] private float dashDuration = 0.1f; // How long the dash takes to complete
         [SerializeField] private float dashCooldown = 1f; // Time between dashes
         public ElementType elementType;
+        public ParticleSystem immunityAura;
+        private HealthController healthController;
+
 
         private bool canDash = true;
         private bool isDashing = false;
@@ -41,6 +44,7 @@ namespace Cainos.PixelArtTopDown_Basic
         private float cooldownTimer = 0f;
         private Vector3 dashStartPosition;
         private Vector3 dashTargetPosition;
+        
 
         [SerializeField] private InventoryController inventory; // To pull data from inventory controller
 
@@ -48,7 +52,11 @@ namespace Cainos.PixelArtTopDown_Basic
         {
             animator = GetComponent<Animator>();
             trail = GetComponent<TrailRenderer>();
+            dashParticles = transform.Find("DashParticles").GetComponent<ParticleSystem>();
             spriteRenderer = GetComponent<SpriteRenderer>();
+            immunityAura = transform.Find("PlayerAura").GetComponent<ParticleSystem>();
+            healthController = GetComponent<HealthController>();
+            immunityAura.Stop();
             if (spriteRenderer == null)
             {
                 Debug.LogError("No SpriteRenderer found on this GameObject!");
@@ -64,7 +72,7 @@ namespace Cainos.PixelArtTopDown_Basic
         {
             HandleMovement(); // Consolidated movement code to a different method
 
-            setElementMode(); // To monitor keypresses in case element mode is registered to change
+            SetElementMode(); // To monitor keypresses in case element mode is registered to change
 
             if(Input.GetMouseButtonDown(1))
             {
@@ -270,7 +278,7 @@ namespace Cainos.PixelArtTopDown_Basic
             // Set the rotation for the particles based on degrees passed to method
             shapes_prop.rotation = new Vector3(x, y, z);
         }
-        public void setSpellShapesRotation(float x, float y, float z)
+        public void SetSpellShapesRotation(float x, float y, float z)
         {
             // Create references to change the rotation of each element
             ParticleSystem.ShapeModule fireShape = fireballPrefab.shape;
@@ -286,7 +294,7 @@ namespace Cainos.PixelArtTopDown_Basic
             windShape.rotation = newRotation;
         }
 
-        public void setElementMode()
+        public void SetElementMode()
         {
             if (Input.GetKeyDown(KeyCode.F))
             {
@@ -315,35 +323,35 @@ namespace Cainos.PixelArtTopDown_Basic
             switch(CurrentDirection)
             {
                 case 0:
-                    setSpellShapesRotation(90, 90, 0); // Facing down
+                    SetSpellShapesRotation(90, 90, 0); // Facing down
                     spellPoint.transform.localPosition = new Vector3(0, -1, 0); // Shift starting position of particles up
                     break;
                 case 1:
-                    setSpellShapesRotation(-90, -90, 0); // Facing up
+                    SetSpellShapesRotation(-90, -90, 0); // Facing up
                     spellPoint.transform.localPosition = new Vector3(0, 1, 0); // Shift starting position of particles down
                     break;
                 case 2:
-                    setSpellShapesRotation(0, 90, 0); // Facing right
+                    SetSpellShapesRotation(0, 90, 0); // Facing right
                     spellPoint.transform.localPosition = new Vector3(0.5f, 0, 0); // Shift starting position of particles right
                     break;
                 case 3:
-                    setSpellShapesRotation(180, 90, 0); // Facing left
+                    SetSpellShapesRotation(180, 90, 0); // Facing left
                     spellPoint.transform.localPosition = new Vector3(-0.5f, 0, 0); // Shift starting position of particles left
                     break;
                 case 4:
-                    setSpellShapesRotation(-45, -45, 0); // Facing up left
+                    SetSpellShapesRotation(-45, -45, 0); // Facing up left
                     spellPoint.transform.localPosition = new Vector3(-0.5f, 0, 0); // Shift starting position of particles left
                     break;
                 case 5:
-                    setSpellShapesRotation(-135, -135, 0); // Facing up right
+                    SetSpellShapesRotation(-135, -135, 0); // Facing up right
                     spellPoint.transform.localPosition = new Vector3(0.5f, 0, 0); // Reset starting position of particles  
                     break;
                 case 6:
-                    setSpellShapesRotation(135, 135, 0);
+                    SetSpellShapesRotation(135, 135, 0);
                     spellPoint.transform.localPosition = new Vector3(-0.5f, -0.5f, 0); // Shift starting position of particles down left
                     break;
                 case 7:
-                    setSpellShapesRotation(45, 45, 0);
+                    SetSpellShapesRotation(45, 45, 0);
                     spellPoint.transform.localPosition = new Vector3(0.5f, -0.5f, 0); // Shift starting position of particles down right
                     break;
             }
