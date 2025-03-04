@@ -1,5 +1,6 @@
 using System.Collections;
 using Cainos.PixelArtTopDown_Basic;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class HealthController : MonoBehaviour
@@ -9,18 +10,25 @@ public class HealthController : MonoBehaviour
 
     private ParticleSystem playerImmunityAura;
     private float phaseIntervalTime = 2f;
-    private bool _isImmune;
+    private bool _isImmune; // For future possible implementation of immunity mechanics
 
     [SerializeField] private int maximumHealth;
     [SerializeField] private bool isPlayer; // To set as player character in inspector
+    [SerializeField] private bool isBoss; // To set as boss in inspector
+    [SerializeField] Slider healthSlider;
 
-
+    void Start()
+    {
+        healthSlider.maxValue = maximumHealth;
+        healthSlider.value = currentHealth;
+    }
     public void DealDamage(int damage)
     {
         if (isImmune) return;
         
         if (currentHealth - damage <= 0)
         {
+            healthSlider.value = 0;
             OnDeath();
         }
         else
@@ -28,7 +36,12 @@ public class HealthController : MonoBehaviour
             currentHealth -= damage;
             if (isPlayer)
             {
+                healthSlider.value = currentHealth;
                 Debug.Log($"Current player health is: {currentHealth}");
+            }
+            if (isBoss)
+            {
+                Debug.Log($"Current boss health is: {currentHealth}");
             }
         }
     }
@@ -83,9 +96,9 @@ public class HealthController : MonoBehaviour
         {
             GameManager.Instance.ShowGameOver();
         }
-        else
+        if (isBoss)
         {
-            // Boss death logic
+            GameManager.Instance.ShowGameWin();
         }
     }
 }

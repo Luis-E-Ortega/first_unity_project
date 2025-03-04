@@ -24,8 +24,8 @@ public class BossBehavior : MonoBehaviour
 
     [SerializeField] private TopDownCharacterController player;
 
-    private int fullDamage = 50;
-    private int partialDamage = 10;
+    [SerializeField] private int fullDamage = 50;
+    [SerializeField] private int partialDamage = 10;
   
 
     void Awake()

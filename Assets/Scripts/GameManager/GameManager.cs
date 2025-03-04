@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameObject gameOverPanel;
+    [SerializeField] private GameObject gameWinPanel; // Added panel for game win
     public Button restartButton;
     public static GameManager Instance {get; private set;}
 
@@ -24,10 +25,12 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         gameOverPanel.SetActive(false);
+        gameWinPanel.SetActive(false); 
+        Time.timeScale = 1; // To ensure game starts unpaused
     }
     void Update()
     {
-        if (gameOverPanel.activeSelf && Input.GetKeyDown(KeyCode.Y))
+        if ((gameOverPanel.activeSelf || gameWinPanel.activeSelf) && Input.GetKeyDown(KeyCode.Y)) // Changed this to add or statement
         {
             RestartGame();
         }
@@ -35,22 +38,38 @@ public class GameManager : MonoBehaviour
 
     public void ShowGameOver()
     {
-        //Time.timeScale = 0;
+        PauseGame();
         Debug.Log("ShowGameOver called");
         gameOverPanel.SetActive(true);
 
+        SetUpRestartButton();
+    }
+    public void ShowGameWin()
+    {
+        PauseGame();
+        Debug.Log("ShowGameWin called");
+        gameWinPanel.SetActive(true);
+        
+        SetUpRestartButton();
+    }
+    private void PauseGame()
+    {
+        Time.timeScale = 0f;
+    }
+
+    private void SetUpRestartButton()
+    {
         restartButton.enabled = false;
         restartButton.enabled = true;
         restartButton.interactable = true;
         EventSystem.current.SetSelectedGameObject(restartButton.gameObject);
         EventSystem.current.SetSelectedGameObject(null);
-        
     }
 
     public void RestartGame()
     {
         Debug.Log("RestartGame called");
-        Time.timeScale = 1;
+        Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
