@@ -15,32 +15,31 @@ public class HealthController : MonoBehaviour
     [SerializeField] private int maximumHealth;
     [SerializeField] private bool isPlayer; // To set as player character in inspector
     [SerializeField] private bool isBoss; // To set as boss in inspector
-    [SerializeField] Slider healthSlider;
-
-    void Start()
-    {
-        healthSlider.maxValue = maximumHealth;
-        healthSlider.value = currentHealth;
-    }
+    [SerializeField] Slider playerHealthSlider;
+    [SerializeField] Slider bossHealthSlider;
     public void DealDamage(int damage)
     {
         if (isImmune) return;
         
         if (currentHealth - damage <= 0)
         {
-            healthSlider.value = 0;
+            if(isPlayer && playerHealthSlider != null)
+                playerHealthSlider.value = 0;
+            else if(isBoss && bossHealthSlider != null)
+                bossHealthSlider.value = 0;
             OnDeath();
         }
         else
         {
             currentHealth -= damage;
-            if (isPlayer)
+            if (isPlayer && playerHealthSlider != null)
             {
-                healthSlider.value = currentHealth;
+                playerHealthSlider.value = currentHealth;
                 Debug.Log($"Current player health is: {currentHealth}");
             }
-            if (isBoss)
+            if (isBoss && bossHealthSlider != null)
             {
+                bossHealthSlider.value = currentHealth;
                 Debug.Log($"Current boss health is: {currentHealth}");
             }
         }
@@ -71,9 +70,30 @@ public class HealthController : MonoBehaviour
     {
         currentHealth = maximumHealth;
         Debug.Log($"HealthController Start - currentHealth set to: {currentHealth}");
-        if (isPlayer)
+
+        if (isPlayer && playerHealthSlider != null)
         {
             playerImmunityAura = transform.Find("PlayerAura").GetComponent<ParticleSystem>();
+            if (playerHealthSlider != null)
+            {
+                playerHealthSlider.maxValue = maximumHealth;
+                playerHealthSlider.value = currentHealth;
+            }
+            
+        }
+        else if (isBoss && bossHealthSlider != null)
+        {
+            bossHealthSlider.gameObject.SetActive(false); // Start boss health bar hidden
+            bossHealthSlider.maxValue = maximumHealth;
+            bossHealthSlider.value = currentHealth;
+        }
+    }
+    // Method to show boss health bar
+    public void ShowBossUI()
+    {
+        if (isBoss && bossHealthSlider != null)
+        {
+            bossHealthSlider.gameObject.SetActive(true);
         }
     }
 

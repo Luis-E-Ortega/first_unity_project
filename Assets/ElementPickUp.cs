@@ -5,7 +5,6 @@ public class ElementPickUp : MonoBehaviour
 {
     private InventoryController inventory;
     public ElementType elementType;
-
     public BossBehavior bossBehavior; // Reference for boss spawning;
 
     
@@ -18,10 +17,6 @@ public class ElementPickUp : MonoBehaviour
         {
             Debug.LogError("No InventoryController found in the scene!");
         }
-        
-    }
-    void Update()
-    {
         
     }
 
@@ -40,11 +35,11 @@ public class ElementPickUp : MonoBehaviour
             if (ElementSpawner.activeOrbs == 0)
             {
                 Debug.Log("activeOrbs is 0! Spawning boss...");
-                //bossBehavior.SpawnBoss();
                 if (bossBehavior != null)
                 {
                     Debug.Log("Boss reference found, starting spawn");
                     StartCoroutine(bossBehavior.SpawnBoss());
+                    bossBehavior.GetComponent<HealthController>().ShowBossUI(); // Activate boss health bar
                 }
                 else
                 {
